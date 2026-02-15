@@ -100,6 +100,264 @@ from{text-shadow:0 0 10px #ff4081;}
 to{text-shadow:0 0 40px gold;}
 }
 
+/* ---------- CAKE CUT SLICE ANIMATION ---------- */
+.cake-container{perspective:800px;}
+
+.cake{
+font-size:clamp(80px,20vw,140px);
+cursor:pointer;
+position:relative;
+display:inline-block;
+}
+
+/* full cake */
+.cake .whole{
+display:block;
+transition:0.8s;
+}
+
+/* slice piece */
+.cake .slice{
+position:absolute;
+left:0;
+top:0;
+opacity:0;
+transition:1s;
+}
+
+/* cut animation */
+.cake.cut .whole{
+transform:translateX(-30px) rotate(-10deg);
+}
+
+.cake.cut .slice{
+opacity:1;
+transform:translateX(70px) translateY(-10px) rotate(20deg) scale(1.1);
+}
+
+/* ---------- MESSAGE ---------- */
+.message{
+font-size:clamp(18px,4vw,25px);
+margin-top:20px;
+animation:fadeIn 2s forwards;
+padding:0 20px;
+}
+
+@keyframes fadeIn{
+from{opacity:0;}
+to{opacity:1;}
+}
+
+/* ---------- CONFETTI ---------- */
+canvas{
+position:fixed;
+top:0;
+left:0;
+pointer-events:none;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- Background Music (keep music file in same folder) -->
+<audio id="music" src="andriig-happy-birthday-471211.mp3" loop></audio>
+
+<!-- ---------- PAGE 1: LOGIN ---------- -->
+<div id="loginPage" class="page">
+
+<div class="login-box">
+<h2>Secure Login</h2>
+
+<input placeholder="Username">
+<input type="password" placeholder="Password">
+
+<button onclick="fakeLogin()">Login</button>
+
+<div class="extra-links">
+<p onclick="fakeLogin()">New User? Register</p>
+<p onclick="fakeLogin()">Forgot Password?</p>
+</div>
+
+<p class="small">Protected System Access</p>
+</div>
+
+</div>
+
+<!-- ---------- PAGE 2: LOADING ---------- -->
+<div id="loadingPage" class="page hidden">
+<h2>Verifying Credentials...</h2>
+<div class="loader"></div>
+</div>
+
+<!-- ---------- PAGE 3: BIRTHDAY ---------- -->
+<div id="birthdayPage" class="page hidden">
+
+<canvas id="confetti"></canvas>
+
+<h1 class="wish">🎉 Happy Birthday Yokesh 🎉</h1>
+
+<div class="cake-container">
+<div class="cake" onclick="cutCake()" id="cake">
+
+<span class="whole">🎂</span>
+<span class="slice">🍰</span>
+
+</div>
+<p>Click the cake to cut it!</p>
+</div>
+
+<p id="message" class="hidden message">
+May your life be filled with happiness, success & joy ❤️
+</p>
+
+</div>
+
+<script>
+
+/* ---------- PAGE FLOW ---------- */
+
+const music=document.getElementById("music");
+
+function fakeLogin(){
+document.getElementById("loginPage").classList.add("hidden");
+document.getElementById("loadingPage").classList.remove("hidden");
+
+setTimeout(()=>{
+document.getElementById("loadingPage").classList.add("hidden");
+document.getElementById("birthdayPage").classList.remove("hidden");
+
+music.play().catch(()=>{});
+startConfetti();
+
+},3000);
+}
+
+/* ---------- CAKE CUT ---------- */
+
+function cutCake(){
+const cake=document.getElementById("cake");
+
+if(!cake.classList.contains("cut")){
+cake.classList.add("cut");
+document.getElementById("message").classList.remove("hidden");
+}
+}
+
+/* ---------- CONFETTI ---------- */
+
+const canvas=document.getElementById("confetti");
+const ctx=canvas.getContext("2d");
+
+function resizeCanvas(){
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener("resize",resizeCanvas);
+
+let pieces=[];
+
+for(let i=0;i<200;i++){
+pieces.push({
+x:Math.random()*window.innerWidth,
+y:Math.random()*window.innerHeight,
+size:Math.random()*8+4,
+speed:Math.random()*3+1
+});
+}
+
+function startConfetti(){
+function update(){
+ctx.clearRect(0,0,canvas.width,canvas.height);
+
+pieces.forEach(p=>{
+ctx.fillStyle=`hsl(${Math.random()*360},100%,50%)`;
+ctx.fillRect(p.x,p.y,p.size,p.size);
+
+p.y+=p.speed;
+
+if(p.y>canvas.height){
+p.y=0;
+p.x=Math.random()*canvas.width;
+}
+});
+
+requestAnimationFrame(update);
+}
+update();
+}
+
+</script>
+
+</body>
+</html>max-width:350px;
+}
+
+input{
+display:block;
+margin:15px auto;
+padding:12px;
+width:90%;
+max-width:250px;
+border:none;
+border-radius:6px;
+}
+
+button{
+padding:12px 30px;
+border:none;
+border-radius:8px;
+background:#ff4081;
+color:white;
+font-size:16px;
+cursor:pointer;
+transition:0.3s;
+}
+
+button:hover{transform:scale(1.1);}
+
+.extra-links p{
+margin:5px;
+color:#ddd;
+cursor:pointer;
+font-size:14px;
+}
+
+.extra-links p:hover{
+color:#ff4081;
+text-decoration:underline;
+}
+
+.small{font-size:12px;}
+
+/* ---------- LOADER ---------- */
+.loader{
+border:6px solid #fff;
+border-top:6px solid #ff4081;
+border-radius:50%;
+width:60px;
+height:60px;
+animation:spin 1s linear infinite;
+}
+
+@keyframes spin{
+100%{transform:rotate(360deg);}
+}
+
+/* ---------- BIRTHDAY PAGE ---------- */
+.wish{
+font-size:clamp(28px,5vw,50px);
+animation:glow 1s infinite alternate;
+padding:0 20px;
+}
+
+@keyframes glow{
+from{text-shadow:0 0 10px #ff4081;}
+to{text-shadow:0 0 40px gold;}
+}
+
 /* ---------- 3D CAKE ---------- */
 .cake-container{perspective:800px;}
 
