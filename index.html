@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Secure System</title>
+
+<style>
+
+/* ---------- GENERAL ---------- */
+body{
+margin:0;
+font-family:Arial, sans-serif;
+background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+color:white;
+text-align:center;
+overflow:hidden;
+}
+
+.page{
+height:100vh;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+}
+
+.hidden{display:none;}
+
+/* ---------- LOGIN BOX ---------- */
+.login-box{
+background:rgba(255,255,255,0.1);
+padding:40px;
+border-radius:12px;
+backdrop-filter:blur(10px);
+}
+
+input{
+display:block;
+margin:15px auto;
+padding:12px;
+width:220px;
+border:none;
+border-radius:6px;
+}
+
+button{
+padding:12px 30px;
+border:none;
+border-radius:8px;
+background:#ff4081;
+color:white;
+font-size:16px;
+cursor:pointer;
+transition:0.3s;
+}
+
+button:hover{transform:scale(1.1);}
+
+.extra-links p{
+margin:5px;
+color:#ddd;
+cursor:pointer;
+font-size:14px;
+}
+
+.extra-links p:hover{
+color:#ff4081;
+text-decoration:underline;
+}
+
+.small{font-size:12px;}
+
+/* ---------- LOADER ---------- */
+.loader{
+border:6px solid #fff;
+border-top:6px solid #ff4081;
+border-radius:50%;
+width:60px;
+height:60px;
+animation:spin 1s linear infinite;
+}
+
+@keyframes spin{
+100%{transform:rotate(360deg);}
+}
+
+/* ---------- BIRTHDAY PAGE ---------- */
+.wish{
+font-size:50px;
+animation:glow 1s infinite alternate;
+}
+
+@keyframes glow{
+from{text-shadow:0 0 10px #ff4081;}
+to{text-shadow:0 0 40px gold;}
+}
+
+/* ---------- 3D CAKE ---------- */
+.cake-container{perspective:800px;}
+
+.cake{
+font-size:120px;
+cursor:pointer;
+transition:1s;
+}
+
+.cake:hover{
+transform:rotateY(25deg) rotateX(20deg) scale(1.2);
+}
+
+.cut{
+transform:rotate(20deg) scale(1.3);
+}
+
+.message{
+font-size:25px;
+margin-top:20px;
+animation:fadeIn 2s forwards;
+}
+
+@keyframes fadeIn{
+from{opacity:0;}
+to{opacity:1;}
+}
+
+/* ---------- CONFETTI ---------- */
+canvas{
+position:fixed;
+top:0;
+left:0;
+pointer-events:none;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- Background Music -->
+<audio id="music" src="birthday.mp3" loop></audio>
+
+<!-- ---------- PAGE 1: LOGIN ---------- -->
+<div id="loginPage" class="page">
+
+<div class="login-box">
+<h2>Secure Login</h2>
+
+<input placeholder="Username">
+<input type="password" placeholder="Password">
+
+<button onclick="fakeLogin()">Login</button>
+
+<div class="extra-links">
+<p onclick="fakeLogin()">New User? Register</p>
+<p onclick="fakeLogin()">Forgot Password?</p>
+</div>
+
+<p class="small">Protected System Access</p>
+</div>
+
+</div>
+
+<!-- ---------- PAGE 2: LOADING ---------- -->
+<div id="loadingPage" class="page hidden">
+<h2>Verifying Credentials...</h2>
+<div class="loader"></div>
+</div>
+
+<!-- ---------- PAGE 3: BIRTHDAY ---------- -->
+<div id="birthdayPage" class="page hidden">
+
+<canvas id="confetti"></canvas>
+
+<h1 class="wish">🎉 Happy Birthday Yokesh 🎉</h1>
+
+<div class="cake-container">
+<div class="cake" onclick="cutCake()">🎂</div>
+<p>Click the cake to cut it!</p>
+</div>
+
+<p id="message" class="hidden message">
+May your life be filled with happiness, success & joy ❤️
+</p>
+
+</div>
+
+<script>
+
+/* ---------- PAGE FLOW ---------- */
+
+const music=document.getElementById("music");
+
+function fakeLogin(){
+document.getElementById("loginPage").classList.add("hidden");
+document.getElementById("loadingPage").classList.remove("hidden");
+
+setTimeout(()=>{
+document.getElementById("loadingPage").classList.add("hidden");
+document.getElementById("birthdayPage").classList.remove("hidden");
+
+music.play().catch(()=>{});
+startConfetti();
+
+},3000);
+}
+
+/* ---------- CAKE CUT ---------- */
+
+function cutCake(){
+document.querySelector(".cake").classList.add("cut");
+document.getElementById("message").classList.remove("hidden");
+}
+
+/* ---------- CONFETTI ---------- */
+
+const canvas=document.getElementById("confetti");
+const ctx=canvas.getContext("2d");
+
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
+
+let pieces=[];
+
+for(let i=0;i<200;i++){
+pieces.push({
+x:Math.random()*canvas.width,
+y:Math.random()*canvas.height,
+size:Math.random()*8+4,
+speed:Math.random()*3+1
+});
+}
+
+function startConfetti(){
+function update(){
+ctx.clearRect(0,0,canvas.width,canvas.height);
+
+pieces.forEach(p=>{
+ctx.fillStyle=`hsl(${Math.random()*360},100%,50%)`;
+ctx.fillRect(p.x,p.y,p.size,p.size);
+
+p.y+=p.speed;
+
+if(p.y>canvas.height){
+p.y=0;
+p.x=Math.random()*canvas.width;
+}
+});
+
+requestAnimationFrame(update);
+}
+update();
+}
+
+</script>
+
+</body>
+</html>
